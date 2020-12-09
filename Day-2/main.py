@@ -25,3 +25,16 @@ valid_passwords = list(map(checkPassword, password_list))
 num_of_valid_passwords = valid_passwords.count(True)
 
 print("Number of valid passwords:", num_of_valid_passwords)
+
+
+def checkPasswordV2(password):
+  first = password[2][int(password[0][0]) - 1] == password[1]
+  second = password[2][int(password[0][1]) - 1] == password[1]
+
+  return not (first and second) and (first or second)
+
+
+valid_passwords_v2 = list(map(checkPasswordV2, password_list))
+num_of_valid_passwords_v2 = valid_passwords_v2.count(True)
+
+print("Number of valid passwords (V2):", num_of_valid_passwords_v2)
