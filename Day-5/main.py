@@ -79,3 +79,9 @@ boardingCodes.sort(
     key=lambda currentBoardingCode: currentBoardingCode.get("Seat ID"))
 
 print("\nThe highest seat ID is:", boardingCodes[0].get("Seat ID"))
+
+for actualSeatID in range(boardingCodes[-1].get("Seat ID"),
+                          boardingCodes[0].get("Seat ID")):
+  if actualSeatID not in list(
+      map(lambda boardingCode: boardingCode.get("Seat ID"), boardingCodes)):
+    print("\nMy seat ID is:", actualSeatID)
