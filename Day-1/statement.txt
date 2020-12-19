@@ -27,6 +27,8 @@ Of course, your expense report is much larger. Find the two entries that sum to 
 
 Your puzzle answer was 1006176.
 
+The first half of this puzzle is complete! It provides one gold star: *
+
 
 --- Part Two ---
 
