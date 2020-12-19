@@ -47,6 +47,8 @@ Count the number of valid passports - those that have all required fields. Treat
 
 Your puzzle answer was 260.
 
+The first half of this puzzle is complete! It provides one gold star: *
+
 
 --- Part Two ---
 

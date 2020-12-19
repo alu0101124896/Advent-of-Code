@@ -22,6 +22,8 @@ How many passwords are valid according to their policies?
 
 Your puzzle answer was 434.
 
+The first half of this puzzle is complete! It provides one gold star: *
+
 
 --- Part Two ---
 
