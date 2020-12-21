@@ -43,3 +43,17 @@ def outermostBags(bag, outermostSet=set()):
 print(
     "\nThe number of bag colors that can eventually containt at least one shiny gold bag is:",
     len(outermostBags("shiny gold")))
+
+
+def innermostBags(bag):
+  currentBags = 0
+  for succesor in bagRulesGraph.successors(bag):
+    succesorWeight = bagRulesGraph.get_edge_data(bag, succesor).get("weight")
+    currentBags += succesorWeight
+    currentBags += succesorWeight * innermostBags(succesor)
+  return currentBags
+
+
+print(
+    "\nThe number of individual bags required inside a single shiny gold bag is:",
+    innermostBags("shiny gold"))
