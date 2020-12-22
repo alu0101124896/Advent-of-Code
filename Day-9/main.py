@@ -1,3 +1,6 @@
+from functools import reduce
+
+
 def checkEncryptionChecksum(encryptedData, encryptedDataIndex, firstBufferIndex,
                             secondBufferIndex):
   if secondBufferIndex < encryptedDataIndex:
@@ -25,7 +28,7 @@ def validEncryption(encryptedData, encryptedDataIndex, preambleLength,
 
 def firstSecurityFailure(encryptedData, preambleLength, encryptedDataIndex):
   if encryptedDataIndex >= len(encryptedData):
-    raise Exception("\nNo security failure detected")
+    raise Exception("\nNo security failure detected.")
 
   else:
     if not validEncryption(encryptedData, encryptedDataIndex, preambleLength,
@@ -35,6 +38,49 @@ def firstSecurityFailure(encryptedData, preambleLength, encryptedDataIndex):
     else:
       return firstSecurityFailure(encryptedData, preambleLength,
                                   encryptedDataIndex + 1)
+
+
+def checkSetSum(encryptedData, securityFailure, firstSetIndex, secondSetIndex):
+  if secondSetIndex < len(encryptedData):
+    currentSet = encryptedData[firstSetIndex:secondSetIndex]
+    if reduce(lambda a, b: a + b, currentSet) == securityFailure:
+      return True, currentSet
+    else:
+      return checkSetSum(encryptedData, securityFailure, firstSetIndex,
+                         secondSetIndex + 1)
+  return False, list()
+
+
+def contiguousSetRecursive(encryptedData, securityFailure, firstSetIndex=0):
+  if firstSetIndex < len(encryptedData):
+    contiguousSetFound, currentSet = checkSetSum(encryptedData, securityFailure,
+                                                 firstSetIndex,
+                                                 firstSetIndex + 1)
+    if contiguousSetFound:
+      return currentSet
+    else:
+      return contiguousSetRecursive(encryptedData, securityFailure,
+                                    firstSetIndex + 1)
+  else:
+    raise Exception("\nNo encryption weakness detected.")
+
+
+def contiguousSetIterative(encryptedData, securityFailure):
+  for firstSetIndex in range(len(encryptedData)):
+    for secondSetIndex in range(firstSetIndex + 1, len(encryptedData)):
+      currentSet = encryptedData[firstSetIndex:secondSetIndex]
+      if reduce(lambda a, b: a + b, currentSet) == securityFailure:
+        return currentSet
+
+
+def encryptionWeakness(encryptedData, securityFailure):
+  try:
+    foundSet = contiguousSetRecursive(encryptedData, securityFailure)
+  except RecursionError as error:
+    print("\nError:", error.args[0] + ", proceeding iteratively...")
+    foundSet = contiguousSetIterative(encryptedData, securityFailure)
+  foundSet.sort()
+  return foundSet[0] + foundSet[-1]
 
 
 def main():
@@ -47,8 +93,11 @@ def main():
   encryptedData = list(map(int, encryptedData))
 
   try:
-    print("\nThe first encryption security failure is:",
-          firstSecurityFailure(encryptedData, preambleLength, preambleLength))
+    securityFailure = firstSecurityFailure(encryptedData, preambleLength,
+                                           preambleLength)
+    print("\nThe first encryption security failure is:", securityFailure)
+    print("\nThe encryption weakness is:",
+          encryptionWeakness(encryptedData, securityFailure))
   except Exception as error:
     print(error.args[0])
 
