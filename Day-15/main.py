@@ -1,7 +1,9 @@
 def main():
   startingNumbers = parseData()
 
-  finalTurn = 2020
+  # finalTurn = 2020
+  finalTurn = 30000000
+
   finalNumber = playGame(startingNumbers, finalTurn)
 
   print(f"\nThe {finalTurn}th number spoken is {finalNumber}")
