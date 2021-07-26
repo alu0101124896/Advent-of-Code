@@ -1,20 +1,31 @@
+import math
+
+
 def main():
-  fieldRules, nearbyTickets = parseData()
+  fieldRules, yourTicket, nearbyTickets = parseData()
 
-  nonValidValues = validateTickets(nearbyTickets, fieldRules)
+  validTickets, nonValidValues = validateTickets(nearbyTickets, fieldRules)
 
-  print(f"\nThe ticket scanning error rate is: {sum(nonValidValues)}")
+  # print(f"\nThe ticket scanning error rate is: {sum(nonValidValues)}")
+
+  fieldsOrder = getFieldsOrder(fieldRules, validTickets)
+
+  print("\nThe result of multiplying the six departure values of my ticket is:",
+        math.prod(getDepartureValues(yourTicket, fieldsOrder)))
 
 
 def parseData():
   inputFile = input("\nInput file: ")
-  rawFieldRules, _, rawNearbyTickets = open(inputFile, 'r').read().split("\n\n")
+  rawFieldRules, yourTicket, rawNearbyTickets = \
+    open(inputFile, 'r').read().split("\n\n")
 
   fieldRules = {
       key: value
       for (key, value)\
       in [parseFieldRule(fieldRule) for fieldRule in rawFieldRules.split("\n")]
   }
+
+  yourTicket = [int(value) for value in yourTicket.split("\n")[1].split(",")]
 
   nearbyTickets = rawNearbyTickets.split("\n")[1:]
 
@@ -24,7 +35,7 @@ def parseData():
   nearbyTickets = [[int(value) for value in ticket.split(",")]
                    for ticket in nearbyTickets]
 
-  return fieldRules, nearbyTickets
+  return fieldRules, yourTicket, nearbyTickets
 
 
 def parseFieldRule(fieldRule: str):
@@ -55,7 +66,51 @@ def validateTickets(tickets: list, fieldRules: dict):
       if not any([ticketValue in valueRange for valueRange in valueRanges])
   ]
 
-  return nonValidValues
+  validTickets = [
+      ticket for ticket in tickets
+      if not any([value in ticket for value in nonValidValues])
+  ]
+
+  return validTickets, nonValidValues
+
+
+def getFieldsOrder(fieldRules: dict, validTickets: list):
+  fieldsOrder = dict()
+  fieldCandidates = fieldRules.copy()
+  fieldValues = [[ticket[index] for ticket in validTickets]
+                 for index in range(len(fieldCandidates.items()))]
+
+  while len(fieldsOrder.items()) < len(fieldCandidates.items()):
+    for (fieldName, ruleRanges) in fieldCandidates.items():
+      posibleMatch = [
+          all([
+              any([
+                  fieldValues[valueIndex][ticketIndex] in range
+                  for range in ruleRanges.values()
+              ]) for ticketIndex in range(len(fieldValues[valueIndex]))
+          ]) for valueIndex in range(len(fieldCandidates.items()))
+      ]
+
+      if posibleMatch.count(True) == 1:
+        matchIndex = posibleMatch.index(True)
+
+        fieldValues[matchIndex] = [-1]
+
+        fieldsOrder.update({fieldName: matchIndex})
+        break
+
+  return fieldsOrder
+
+
+def getDepartureValues(yourTicket: list, fieldsOrder: dict):
+  departureValues = [
+      value for value in yourTicket if yourTicket.index(value) in [
+          index for (fieldName, index) in fieldsOrder.items()
+          if fieldName.startswith("departure")
+      ]
+  ]
+
+  return departureValues
 
 
 main()
