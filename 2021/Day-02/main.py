@@ -24,22 +24,21 @@ def parse_data():
     if data[len(data) - 1] == '':
         data.pop()
 
-    data = [command.split() for command in data]
-
-    return data
+    return [command.split() for command in data]
 
 
-def move_submarine(course, horizontal_position=0, depth=0):
+def move_submarine(course, horizontal_position=0, depth=0, aim=0):
     '''Function to calculate the horizontal position and depth of the submarine
     after following the given course.
     '''
     for movement, units in course:
         if movement == "forward":
             horizontal_position += int(units)
+            depth += aim * int(units)
         elif movement == "down":
-            depth += int(units)
+            aim += int(units)
         elif movement == "up":
-            depth -= int(units)
+            aim -= int(units)
         else:
             raise ValueError("Error: Unknown movement '" + movement + "'.")
 
