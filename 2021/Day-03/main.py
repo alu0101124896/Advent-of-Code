@@ -11,8 +11,11 @@ def main():
     diagnostic_report = parse_data()
 
     power = power_consumption(diagnostic_report)
+    oxigen = oxigen_generator_rating(diagnostic_report)
+    co2 = co2_scrubber_rating(diagnostic_report)
 
     print("\nThe power consumption of the submarine is:", power)
+    print("\nThe life support rating of the submarine is:", oxigen * co2)
 
 
 def parse_data():
@@ -44,6 +47,50 @@ def power_consumption(diagnostic_report):
     epsilon_rate = int(epsilon_rate, 2)
 
     return gamma_rate * epsilon_rate
+
+
+def oxigen_generator_rating(diagnostic_report):
+    '''Function to calculate the oxigen generator rating of the submarine.'''
+    index = 0
+    while len(diagnostic_report) > 1:
+        diagnostic_report_t = list(zip(*diagnostic_report))
+
+        if sum(diagnostic_report_t[index]) < \
+            len(diagnostic_report_t[index]) / 2:
+            target = 0
+        else:
+            target = 1
+
+        diagnostic_report = [
+            value for _, value in enumerate(diagnostic_report)
+            if value[index] == target
+        ]
+
+        index += 1
+
+    return int(''.join([str(digit) for digit in diagnostic_report[0]]), 2)
+
+
+def co2_scrubber_rating(diagnostic_report):
+    '''Function to calculate the co2 scrubber rating of the submarine.'''
+    index = 0
+    while len(diagnostic_report) > 1:
+        diagnostic_report_t = list(zip(*diagnostic_report))
+
+        if sum(diagnostic_report_t[index]) < \
+            len(diagnostic_report_t[index]) / 2:
+            target = 1
+        else:
+            target = 0
+
+        diagnostic_report = [
+            value for _, value in enumerate(diagnostic_report)
+            if value[index] == target
+        ]
+
+        index += 1
+
+    return int(''.join([str(digit) for digit in diagnostic_report[0]]), 2)
 
 
 if __name__ == "__main__":
