@@ -44,26 +44,32 @@ def get_dangerous_areas(hydrotermal_vent_lines):
     '''Function to get the number of points where at least two lines overlap.'''
     dangerous_areas = dict()
     for line in hydrotermal_vent_lines:
+        if line["x_start"] < line["x_end"]:
+            x_slope_inc = 1
+        elif line["x_start"] == line["x_end"]:
+            x_slope_inc = 0
+        else:
+            x_slope_inc = -1
 
-        if line["x_start"] == line["x_end"]:  # vertical
-            if line["y_start"] < line["y_end"]:
-                line_range = range(line["y_start"], line["y_end"] + 1)
-            else:
-                line_range = range(line["y_end"], line["y_start"] + 1)
-            for index in line_range:
-                current_point = f'{line["x_start"]},{index}'
-                dangerous_areas.update(
-                    {current_point: dangerous_areas.get(current_point, 0) + 1})
+        if line["y_start"] < line["y_end"]:
+            y_slope_inc = 1
+        elif line["y_start"] == line["y_end"]:
+            y_slope_inc = 0
+        else:
+            y_slope_inc = -1
 
-        elif line["y_start"] == line["y_end"]:  # horizontal
-            if line["x_start"] < line["x_end"]:
-                line_range = range(line["x_start"], line["x_end"] + 1)
+        x_index = line["x_start"]
+        y_index = line["y_start"]
+        while True:
+            current_point = f'{x_index},{y_index}'
+            dangerous_areas.update(
+                {current_point: dangerous_areas.get(current_point, 0) + 1})
+            if x_index == line["x_end"] and y_index == line["y_end"]:
+                break
             else:
-                line_range = range(line["x_end"], line["x_start"] + 1)
-            for index in line_range:
-                current_point = f'{index},{line["y_start"]}'
-                dangerous_areas.update(
-                    {current_point: dangerous_areas.get(current_point, 0) + 1})
+                x_index += x_slope_inc
+                y_index += y_slope_inc
+
 
     return sum(value >= 2 for value in dangerous_areas.values())
 
