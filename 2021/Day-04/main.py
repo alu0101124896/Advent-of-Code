@@ -33,12 +33,20 @@ def parse_data():
 def play_bingo(called_numbers, boards):
     '''Function to play bingo and get the score of the winning board.'''
     for called_number in called_numbers.keys():
-        called_numbers[called_number] = True
-        for board in boards:
-            board_t = list(zip(*board))
-            if check_marked_inline(called_numbers, board) or \
-               check_marked_inline(called_numbers, board_t):
-                return calculate_score(board, called_numbers, called_number)
+        if len(boards) == 0:
+            break
+        else:
+            called_numbers[called_number] = True
+            for board in boards:
+                board_t = list(zip(*board))
+                if check_marked_inline(called_numbers, board) or \
+                check_marked_inline(called_numbers, board_t):
+                    last_winning_board = board[:]
+                    last_called_number = called_number
+                    boards.remove(board)
+
+    return calculate_score(last_winning_board, called_numbers,
+                           last_called_number)
 
 
 def check_marked_inline(called_numbers, board):
