@@ -12,7 +12,7 @@ def main():
 
     result = calculate_lanternfish_population(days_to_give_birth)
 
-    print("\nThe number lanternfishes after 80 days is:", result)
+    print("\nThe number lanternfishes after 256 days is:", result)
 
 
 def parse_data():
@@ -32,7 +32,7 @@ def parse_data():
 
 def calculate_lanternfish_population(days_to_give_birth):
     '''Function to calculate the population of lanternfishes.'''
-    for _ in range(80):
+    for _ in range(256):
         next_day = dict()
         for time, quantity in days_to_give_birth.items():
             if time == 0:
