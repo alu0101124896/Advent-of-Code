@@ -44,7 +44,9 @@ def find_posible_paths(cave_connections, current_cave=None, history=None):
         for connection in get_connected_caves({current_cave}, cave_connections):
             if (connection.isupper()
                     or ((connection != "start") and
-                        (history.get(connection, 0) == 0))):
+                        # (history.get(connection, 0) == 0))):
+                        (list(history.values()).count(2) <= 1) and
+                        (list(history.values()).count(3) == 0))):
                 paths.update(
                     find_posible_paths(cave_connections, connection,
                                        history.copy()))
