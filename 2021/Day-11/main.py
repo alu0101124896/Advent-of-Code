@@ -10,9 +10,12 @@ def main():
     '''Main function to resolve the challenge.'''
     octopuses_energy = parse_data()
 
-    octopus_flashes = count_flashes(octopuses_energy)
+    # octopus_flashes = count_flashes(octopuses_energy)
+    synchronization_step = calculate_syncrhonization_step(octopuses_energy)
 
-    print("\nThe number of total flashes in 100 steps is:", octopus_flashes)
+    # print("\nThe number of total flashes in 100 steps is:", octopus_flashes)
+    print("\nThe step in which all octopuses synchronize together is:",
+          synchronization_step)
 
 
 def parse_data():
@@ -26,11 +29,17 @@ def parse_data():
     return [[int(number) for number in line] for line in data]
 
 
-def count_flashes(octopuses_energy):
-    '''Function to count the number of flashes after 100 steps.'''
-    flashes = 0
-    for _ in range(100):
-        has_not_flashed = [[True for octopus in line] for line in octopuses_energy]
+# def count_flashes(octopuses_energy):
+#     '''Function to count the number of flashes after 100 steps.'''
+def calculate_syncrhonization_step(octopuses_energy):
+    '''Function to calculate the moment when all octopuses flash
+    simultaneously.'''
+    # flashes = 0
+    # for _ in range(100):
+    step = 1
+    while True:
+        has_not_flashed = [[True for octopus in line]
+                           for line in octopuses_energy]
         octopuses_energy = [[octopus_energy + 1 for octopus_energy in line]
                             for line in octopuses_energy]
 
@@ -53,12 +62,20 @@ def count_flashes(octopuses_energy):
             for octopus_energy in line
         ] for line in octopuses_energy]
 
-        flashes += sum([
-            octopus_energy == 0 for line in octopuses_energy
-            for octopus_energy in line
-        ])
+        # flashes += sum([
+        #     octopus_energy == 0 for line in octopuses_energy
+        #     for octopus_energy in line
+        # ])
 
-    return flashes
+        if sum([
+                octopus_energy for line in octopuses_energy
+                for octopus_energy in line
+        ]) == 0:
+            return step
+
+        step += 1
+
+    # return flashes
 
 
 def increment_nearby(line_index, octopus_energy_index, octopuses_energy):
