@@ -12,9 +12,10 @@ def main():
 
     # print_as_matrix(transparent_paper)
     folded_paper = fold_paper(transparent_paper, fold_instructions)
-    # print_as_matrix(folded_paper)
 
-    print("\nThe number of points after first fold is:", len(folded_paper))
+    # print("\nThe number of points after first fold is:", len(folded_paper))
+    print("\nThe activation code is:")
+    print_as_matrix(folded_paper)
 
 
 def parse_data():
@@ -38,23 +39,26 @@ def parse_data():
 
 def fold_paper(transparent_paper, fold_instructions):
     '''Function to fold the transparen paper.'''
-    fold_axis, fold_index = fold_instructions[0]
-    non_fold_axis = 1 - fold_axis
+    # fold_axis, fold_index = fold_instructions[0]
+    for fold_axis, fold_index in fold_instructions:
+        non_fold_axis = 1 - fold_axis
 
-    folded_paper = dict()
-    for point_key, point_value in transparent_paper.items():
-        if point_value[fold_axis] < fold_index:
-            folded_paper.update({point_key: point_value})
-        else:
-            new_point_value = [None, None]
+        folded_paper = dict()
+        for point_key, point_value in transparent_paper.items():
+            if point_value[fold_axis] < fold_index:
+                folded_paper.update({point_key: point_value})
+            else:
+                new_point_value = [None, None]
 
-            new_point_value[fold_axis] = (fold_index -
-                                        (point_value[fold_axis] - fold_index))
-            new_point_value[non_fold_axis] = point_value[non_fold_axis]
+                new_point_value[fold_axis] = (fold_index -
+                                            (point_value[fold_axis] - fold_index))
+                new_point_value[non_fold_axis] = point_value[non_fold_axis]
 
-            new_point_key = f"{new_point_value[0]},{new_point_value[1]}"
+                new_point_key = f"{new_point_value[0]},{new_point_value[1]}"
 
-            folded_paper.update({new_point_key: new_point_value})
+                folded_paper.update({new_point_key: new_point_value})
+
+        transparent_paper = folded_paper
 
     return folded_paper
 
