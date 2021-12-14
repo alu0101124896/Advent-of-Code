@@ -38,7 +38,7 @@ def find_polymer_score(polymer, pair_insertion_rules):
             polymer_pairs.get(''.join(pair), 0) + 1,
         })
 
-    for _ in range(10):
+    for _ in range(40):
         new_polymer_pairs = dict()
         for pair, times_repeted in polymer_pairs.items():
             new_element = pair_insertion_rules[''.join(pair)]
