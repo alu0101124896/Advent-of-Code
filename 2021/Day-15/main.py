@@ -64,10 +64,21 @@ def parse_data() -> list[list[Point]]:
     if data[len(data) - 1] == '':
         data.pop()
 
-    return [[
-        Point(line_index, risk_index, int(risk))
-        for risk_index, risk in enumerate(line)
-    ] for line_index, line in enumerate(data)]
+    risk_map = list()
+    for i in range(5):
+        for row_index, row in enumerate(data):
+            line = list()
+            for j in range(5):
+                for col_index, col in enumerate(row):
+                    risk = (int(col) + i + j)
+                    if risk >= 10:
+                        risk = risk % 10 + 1
+                    line.append(
+                        Point(row_index + (i * len(data)),
+                              col_index + (j * len(data[0])), risk))
+            risk_map.append(line)
+
+    return risk_map
 
 
 def lowest_risk_path(risk_map: list[list[Point]]) -> int:
