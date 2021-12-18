@@ -5,17 +5,21 @@ Since: December 2021
 Description: This program implemets my solution to the Advent of Code challenge.
 '''
 
+from functools import reduce
+
 
 def main():
     '''Main function to resolve the challenge.'''
     code = parse_data()
 
-    total_packet_version, _ = evaluate(code)
+    # _, total_packet_version, _ = evaluate(code)
+    result, _, _ = evaluate(code)
 
-    print("\nThe sum of all packet version numbers is:", total_packet_version)
+    # print("\nThe sum of all packet version numbers is:", total_packet_version)
+    print("\nThe result of the BITS transmission evaluation is:", result)
 
 
-def parse_data():
+def parse_data() -> str:
     '''Funcion to parse the input data of the challenge.'''
     input_file = input("\nInput file: ")
     data = open(input_file, 'r').read().split("\n")
@@ -23,7 +27,7 @@ def parse_data():
     return hex2bin(data[0])
 
 
-def hex2bin(hex_number):
+def hex2bin(hex_number: str) -> str:
     '''Function to convert the hexadecimal representation of a number into it's
     binary form.'''
     bin_number = ""
@@ -63,7 +67,7 @@ def hex2bin(hex_number):
     return bin_number
 
 
-def evaluate(code):
+def evaluate(code: str) -> tuple[int, int, str]:
     '''Function to evaluate the BITS transmission code.'''
     packet_version = int(code[:3], 2)
     packet_type_id = int(code[3:6], 2)
@@ -77,11 +81,12 @@ def evaluate(code):
                 last = True
             binary_value += packet_content_left[1:5]
             packet_content_left = packet_content_left[5:]
-        literal_value = int(binary_value, 2)
+        result = int(binary_value, 2)
 
     else:
         length_type_id = int(packet_content_left[0])
         packet_content_left = packet_content_left[1:]
+        args = list()
 
         if length_type_id == 0:
             sub_packets_content_length = int(packet_content_left[:15], 2)
@@ -90,8 +95,9 @@ def evaluate(code):
             consumed_sub_packets_content_length = 0
             while (consumed_sub_packets_content_length <
                    sub_packets_content_length):
-                sub_packet_version, packet_content_left = \
+                sub_packet_result, sub_packet_version, packet_content_left = \
                         evaluate(packet_content_left)
+                args.append(sub_packet_result)
                 packet_version += sub_packet_version
                 consumed_sub_packets_content_length = (packet_content_length -
                                                        len(packet_content_left))
@@ -99,11 +105,27 @@ def evaluate(code):
             num_of_sub_packets = int(packet_content_left[:11], 2)
             packet_content_left = packet_content_left[11:]
             for _ in range(num_of_sub_packets):
-                sub_packet_version, packet_content_left = \
+                sub_packet_result, sub_packet_version, packet_content_left = \
                         evaluate(packet_content_left)
+                args.append(sub_packet_result)
                 packet_version += sub_packet_version
 
-    return packet_version, packet_content_left
+        if packet_type_id == 0:
+            result = sum(args)
+        elif packet_type_id == 1:
+            result = reduce(lambda a, b: a * b, args)
+        elif packet_type_id == 2:
+            result = min(args)
+        elif packet_type_id == 3:
+            result = max(args)
+        elif packet_type_id == 5:
+            result = int(args[0] > args[1])
+        elif packet_type_id == 6:
+            result = int(args[0] < args[1])
+        elif packet_type_id == 7:
+            result = int(args[0] == args[1])
+
+    return result, packet_version, packet_content_left
 
 
 if __name__ == "__main__":
