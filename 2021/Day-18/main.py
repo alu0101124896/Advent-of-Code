@@ -158,9 +158,18 @@ def main():
     '''Main function to resolve the challenge.'''
     data = parse_data()
 
-    final_sum = sum(data[1:], data[0])
+    # final_sum = sum(data[1:], data[0])
 
-    print("\nThe magnitude of the final sum is:", final_sum.get_magnitude())
+    sums = list()
+    for i_index, i_value in enumerate(data):
+        for _, j_value in enumerate(data[i_index + 1:]):
+            sums.append((copy.deepcopy(i_value) +
+                         copy.deepcopy(j_value)).get_magnitude())
+            sums.append((copy.deepcopy(j_value) +
+                         copy.deepcopy(i_value)).get_magnitude())
+
+    # print("\nThe magnitude of the final sum is:", final_sum.get_magnitude())
+    print("\nThe largest magnitude of the sum of any pair is:", max(sums))
 
 
 def parse_data() -> list[SFN]:
