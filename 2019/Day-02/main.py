@@ -13,10 +13,21 @@ def main():
 
     original_intcode = parse_data()
 
+    print("\nPart one:")
+
     intcode = initialize_memory(original_intcode.copy(), 12, 2)
     intcode = run_intcode(intcode)
 
-    print("\nThe value left at position 0 is:", intcode[0], end="\n\n")
+    print("  The value left at position 0 is:", intcode[0])
+
+    print("\nPart two:")
+
+    wanted_output = 19690720
+    inputs = find_inputs(original_intcode, wanted_output)
+
+    print(f"  The pair of inputs that produce the output {wanted_output} are:" +
+          f" {inputs[0]} and {inputs[1]}",
+          end="\n\n")
 
 
 def parse_data() -> list[int]:
@@ -27,14 +38,14 @@ def parse_data() -> list[int]:
     with open(input_file, 'r', encoding="utf-8") as infile:
         rawdata = infile.read().split()
 
-    intcode = [int(code) for code in rawdata[0].split(",")]
+    intcode = [int(code) for code in rawdata[0].split(',')]
 
     return intcode
 
 
 def initialize_memory(intcode: list[int], first_value: int,
                       second_value: int) -> list[int]:
-    '''Function to set the initial state of the intcode computer's memory'''
+    '''Function to set the initial state of the intcode computer's memory.'''
 
     intcode[1] = first_value
     intcode[2] = second_value
@@ -68,6 +79,20 @@ def run_intcode(intcode: list[int]) -> list[int]:
         instruction_pointer += 4
 
     return intcode
+
+
+def find_inputs(original_intcode: list[int],
+                wanted_output: int) -> tuple[int, int]:
+    '''Function to find the pair of inputs that produces the given output.'''
+
+    for i in range(0, 100):
+        for j in range(0, 100):
+            intcode = initialize_memory(original_intcode.copy(), i, j)
+
+            if run_intcode(intcode)[0] == wanted_output:
+                return i, j
+
+    return None, None
 
 
 if __name__ == "__main__":
