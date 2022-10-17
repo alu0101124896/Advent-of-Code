@@ -19,10 +19,20 @@ def main():
 
     intersections = set(wires_paths[0]).intersection(set(wires_paths[1]))
 
+    print("\nPart one:")
+
     closest_intersection = find_closest_intersection(intersections)
 
-    print("\nThe distance to the closest intersection is:",
-          closest_intersection,
+    print("  The distance to the closest intersection is:",
+          closest_intersection)
+
+    print("\nPart two:")
+
+    fewest_steps_intersection = find_fewest_steps_intersection(
+        intersections, wires_paths)
+
+    print("  The fewest combined steps to an intersection is:",
+          fewest_steps_intersection,
           end="\n\n")
 
 
@@ -72,7 +82,7 @@ def directions_to_paths(
     return wires_paths
 
 
-def find_closest_intersection(intersections: list[tuple[str, int]]) -> int:
+def find_closest_intersection(intersections: set[tuple[str, int]]) -> int:
     '''Function to find the Manhatan distance of the closest intersection of two
     wires from the central point.'''
 
@@ -81,6 +91,25 @@ def find_closest_intersection(intersections: list[tuple[str, int]]) -> int:
         for intersection in intersections)
 
     return closest_intersection
+
+
+def find_fewest_steps_intersection(
+        intersections: set[tuple[str, int]],
+        wires_paths: list[list[tuple[str, int]]]) -> int:
+    '''Function to find the fewest combined steps the wires must take to reach
+    an intersection.'''
+
+    intersections_steps = []
+
+    for intersection in intersections:
+        current_intersection_steps = 0
+
+        for wire_path in wires_paths:
+            current_intersection_steps += wire_path.index(intersection) + 1
+
+        intersections_steps.append(current_intersection_steps)
+
+    return min(intersections_steps)
 
 
 if __name__ == "__main__":
