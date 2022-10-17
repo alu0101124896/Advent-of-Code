@@ -1,7 +1,7 @@
 '''
 File: main.py
 Author: Sergio Tabares Hernández <alu0101124896@ull.edu.es>
-Since: December 2021
+Since: October 2022
 Description: This program implemets my solution to the Advent of Code challenge.
 '''
 
@@ -35,7 +35,22 @@ def required_fuel(mass: int) -> int:
     '''Function to find the fuel required to launch a given module based on its
     mass.'''
 
-    return floor(mass / 3) - 2
+    fuel_for_module = floor(mass / 3) - 2
+    fuel_for_fuel = required_recursive_fuel(fuel_for_module)
+
+    return fuel_for_module + fuel_for_fuel
+
+
+def required_recursive_fuel(prev_fuel: int) -> int:
+    '''Function to find the fuel required to launch a given module based on its
+    mass and the mass of the required fuel.'''
+
+    new_fuel = floor(prev_fuel / 3) - 2
+
+    if new_fuel <= 0:
+        return 0
+
+    return new_fuel + required_recursive_fuel(new_fuel)
 
 
 if __name__ == "__main__":
