@@ -13,9 +13,19 @@ def main():
 
     modules_mass = parse_data()
 
-    total_fuel = sum(required_fuel(module_mass) for module_mass in modules_mass)
+    print("\nPart one:")
 
-    print("\nThe total fuel needed is:", total_fuel, end="\n\n")
+    module_fuel = sum(
+        required_fuel(module_mass, False) for module_mass in modules_mass)
+
+    print("  The fuel required only for the module mass is:", module_fuel)
+
+    print("\nPart two:")
+
+    total_fuel = sum(
+        required_fuel(module_mass, True) for module_mass in modules_mass)
+
+    print("  The total fuel required is:", total_fuel, end="\n\n")
 
 
 def parse_data():
@@ -31,11 +41,15 @@ def parse_data():
     return modules_mass
 
 
-def required_fuel(mass: int) -> int:
+def required_fuel(mass: int, recursive: bool) -> int:
     '''Function to find the fuel required to launch a given module based on its
     mass.'''
 
     fuel_for_module = floor(mass / 3) - 2
+
+    if not recursive:
+        return fuel_for_module
+
     fuel_for_fuel = required_recursive_fuel(fuel_for_module)
 
     return fuel_for_module + fuel_for_fuel
