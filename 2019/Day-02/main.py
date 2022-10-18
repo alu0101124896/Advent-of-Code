@@ -6,6 +6,7 @@ Description: This program implemets my solution to the Advent of Code challenge.
 '''
 
 from operator import add, mul
+from typing import Optional
 
 
 def main():
@@ -25,9 +26,10 @@ def main():
     wanted_output = 19690720
     inputs = find_inputs(original_intcode, wanted_output)
 
-    print(f"  The pair of inputs that produce the output {wanted_output} are:" +
-          f" {inputs[0]} and {inputs[1]}",
-          end="\n\n")
+    if inputs is not None:
+        print(f"  The pair of inputs that produce the output {wanted_output}" +
+              f" are: {inputs[0]} and {inputs[1]}",
+              end="\n\n")
 
 
 def parse_data() -> list[int]:
@@ -62,19 +64,22 @@ def run_intcode(intcode: list[int]) -> list[int]:
         opcode = intcode[instruction_pointer]
 
         if opcode == 1:
-            operator = add
+            operation = add
 
         elif opcode == 2:
-            operator = mul
+            operation = mul
 
         elif opcode == 99:
             break
+
+        else:
+            raise ValueError("Unknown opcode.")
 
         op_1_pos = intcode[instruction_pointer + 1]
         op_2_pos = intcode[instruction_pointer + 2]
         result_pos = intcode[instruction_pointer + 3]
 
-        intcode[result_pos] = operator(intcode[op_1_pos], intcode[op_2_pos])
+        intcode[result_pos] = operation(intcode[op_1_pos], intcode[op_2_pos])
 
         instruction_pointer += 4
 
@@ -82,7 +87,7 @@ def run_intcode(intcode: list[int]) -> list[int]:
 
 
 def find_inputs(original_intcode: list[int],
-                wanted_output: int) -> tuple[int, int]:
+                wanted_output: int) -> Optional[tuple[int, int]]:
     '''Function to find the pair of inputs that produces the given output.'''
 
     for i in range(0, 100):
@@ -92,7 +97,7 @@ def find_inputs(original_intcode: list[int],
             if run_intcode(intcode)[0] == wanted_output:
                 return i, j
 
-    return None, None
+    return None
 
 
 if __name__ == "__main__":
