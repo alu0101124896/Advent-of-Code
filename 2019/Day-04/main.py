@@ -15,7 +15,9 @@ def main():
 
     valid_passwords = password_generator(lower_bound, upper_bound)
 
-    print("The number of valid passwords is:", len(valid_passwords))
+    print("\nThe number of valid passwords is:",
+          len(valid_passwords),
+          end="\n\n")
 
 
 def parse_data():
@@ -51,17 +53,28 @@ def valid_password(password):
     if len(password) != PASSWD_LEN:
         return False
 
-    adjacent_rule = False
+    adjacent_matching_digits = []
+    current_amd = [password[0]]
+
     for i in range(PASSWD_LEN - 1):
         if password[i] == password[i + 1]:
-            adjacent_rule = True
+            current_amd.append(password[i + 1])
+
+        else:
+            adjacent_matching_digits.append(current_amd.copy())
+            current_amd = [password[i + 1]]
+
+    adjacent_matching_digits.append(current_amd.copy())
+
+    if not any(len(amd) == 2 for amd in adjacent_matching_digits):
+        return False
 
     for i in range(PASSWD_LEN - 1):
         for j in range(i + 1, PASSWD_LEN):
             if password[i] > password[j]:
                 return False
 
-    return adjacent_rule
+    return True
 
 
 if __name__ == "__main__":
