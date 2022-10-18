@@ -37,6 +37,7 @@ def run_intcode(intcode: list[int]):
     '''Function to run the given intcode program.'''
 
     instruction_pointer = 0
+    increase_instruction_pointer = True
 
     while True:
         param_modes_and_opcode = str(intcode[instruction_pointer] + 100000)
@@ -54,6 +55,18 @@ def run_intcode(intcode: list[int]):
 
         elif opcode == "04":
             instruction_offset = 2
+
+        elif opcode == "05":
+            instruction_offset = 3
+
+        elif opcode == "06":
+            instruction_offset = 3
+
+        elif opcode == "07":
+            instruction_offset = 4
+
+        elif opcode == "08":
+            instruction_offset = 4
 
         elif opcode == "99":
             break
@@ -79,10 +92,29 @@ def run_intcode(intcode: list[int]):
         elif opcode == "04":
             print("Output value:", intcode[params[0]])
 
-        else:
-            raise ValueError("Unknown opcode.")
+        elif opcode == "05":
+            if intcode[params[0]] != 0:
+                instruction_pointer = intcode[params[1]]
+                increase_instruction_pointer = False
 
-        instruction_pointer += instruction_offset
+        elif opcode == "06":
+            if intcode[params[0]] == 0:
+                instruction_pointer = intcode[params[1]]
+                increase_instruction_pointer = False
+
+        elif opcode == "07":
+            intcode[params[2]] = int(intcode[params[0]] < intcode[params[1]])
+
+        elif opcode == "08":
+            intcode[params[2]] = int(intcode[params[0]] == intcode[params[1]])
+
+        else:
+            raise ValueError("Opcode has changed during operation.")
+
+        if increase_instruction_pointer:
+            instruction_pointer += instruction_offset
+        else:
+            increase_instruction_pointer = True
 
     # print(intcode)
 
