@@ -13,11 +13,18 @@ def main():
 
     orbits = parse_data()
 
+    print("\nPart one:")
+
     orbits_map = OrbitMap(orbits)
 
-    print("\nThe total number of direct and indirect orbits is:",
-          orbits_map.get_orbital_weight(),
-          end="\n\n")
+    print("  The total number of direct and indirect orbits is:",
+          orbits_map.get_orbital_weight())
+
+    print("\nPart two:")
+
+    solution = orbits_map.get_path_to_santa()
+
+    print("  The minimum number of orbital transfers is:", solution, end="\n\n")
 
 
 def parse_data():
