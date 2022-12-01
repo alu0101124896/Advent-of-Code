@@ -12,10 +12,19 @@ def main():
 
     elves_food = parse_data()
 
+    print("\nPart one:")
+
     solution = get_most_carried_calories(elves_food)
 
-    print("\nThe number of calories carried by the elf carrying the most is:",
-          solution)
+    print("  The total number of calories carried by the elf carrying the",
+          "most calories is:", solution)
+
+    print("\nPart two:")
+
+    solution = get_most_carried_calories(elves_food, 3)
+
+    print("  The total number of calories carried by the three elves carrying",
+          "the most calories is:", solution)
 
 
 def parse_data():
@@ -32,11 +41,18 @@ def parse_data():
     return elves_food
 
 
-def get_most_carried_calories(elves_food):
+def get_most_carried_calories(elves_food, num_elves=1):
 
+    most_calories = []
     elves_calories = [sum(elf_food) for elf_food in elves_food]
 
-    return max(elves_calories)
+    while len(most_calories) < num_elves:
+        current_max_calories = max(elves_calories)
+
+        most_calories.append(current_max_calories)
+        elves_calories.remove(current_max_calories)
+
+    return sum(most_calories)
 
 
 if __name__ == "__main__":
