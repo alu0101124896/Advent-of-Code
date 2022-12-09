@@ -6,7 +6,7 @@ Description: This program implements my solution to the Advent of Code
  challenge.
 """
 
-GAME_RULES = {
+GAME_RULES_PART_ONE = {
     "A": {  # Rock
         "X": 1 + 3,  # Rock -> Draw
         "Y": 2 + 6,  # Paper -> Win
@@ -24,6 +24,24 @@ GAME_RULES = {
     },
 }
 
+GAME_RULES_PART_TWO = {
+    "A": {  # Rock
+        "X": 0 + 3,  # Loss -> Scissors
+        "Y": 3 + 1,  # Draw -> Rock
+        "Z": 6 + 2,  # Win -> Paper
+    },
+    "B": {  # Paper
+        "X": 0 + 1,  # Loss -> Rock
+        "Y": 3 + 2,  # Draw -> Paper
+        "Z": 6 + 3,  # Win -> Scissors
+    },
+    "C": {  # Scissors
+        "X": 0 + 2,  # Loss -> Paper
+        "Y": 3 + 3,  # Draw -> Scissors
+        "Z": 6 + 1,  # Win -> Rock
+    },
+}
+
 
 def main():
     """Main function to resolve the challenge."""
@@ -32,7 +50,13 @@ def main():
 
     print("\nPart one:")
 
-    solution = get_total_score(strategy_guide, GAME_RULES)
+    solution = get_total_score(strategy_guide, GAME_RULES_PART_ONE)
+
+    print("  The total score is:", solution)
+
+    print("\nPart two:")
+
+    solution = get_total_score(strategy_guide, GAME_RULES_PART_TWO)
 
     print("  The total score is:", solution)
 
