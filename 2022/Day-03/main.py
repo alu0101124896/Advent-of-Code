@@ -21,6 +21,13 @@ def main():
 
     print("  The total sum of the priority values is:", part_one_solution)
 
+    print("\nPart two:")
+
+    group_badges = get_group_badges(rucksacks)
+    part_two_solution = sum(get_priority_values(group_badges))
+
+    print("  The total sum of the priority values is:", part_two_solution)
+
 
 def parse_data():
     """Function to parse the input data of the challenge."""
@@ -51,6 +58,18 @@ def get_shared_items(rucksacks):
         )
 
     return shared_items
+
+
+def get_group_badges(rucksacks):
+    """Function to get the badge of the elves' groups of rucksacks."""
+
+    badges = []
+
+    for elves_group in zip(rucksacks[0::3], rucksacks[1::3], rucksacks[2::3]):
+        sets = [{*rucksack} for rucksack in elves_group]
+        badges.append(*sets[0].intersection(*sets[1:]))
+
+    return badges
 
 
 def get_priority_values(items):
