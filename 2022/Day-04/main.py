@@ -18,6 +18,12 @@ def main():
 
     print("  The number of fully overlapped ranges is:", part_one_solution)
 
+    print("\nPart two:")
+
+    part_two_solution = len(get_overlapped_ranges(elf_ranges))
+
+    print("  The number of overlapped ranges is:", part_two_solution)
+
 
 def parse_data():
     """Function to parse the input data of the challenge."""
@@ -53,6 +59,19 @@ def get_fully_overlapped_ranges(elf_ranges):
 
         if (first_elf_range.issubset(second_elf_range) or
                 second_elf_range.issubset(first_elf_range)):
+            overlapped_ranges.append((first_elf_range, second_elf_range))
+
+    return overlapped_ranges
+
+
+def get_overlapped_ranges(elf_ranges):
+    """Function to get all elf pairs in which one elf's range is overlapped on
+    its pair elf's range."""
+
+    overlapped_ranges = []
+    for first_elf_range, second_elf_range in elf_ranges:
+
+        if first_elf_range.intersection(second_elf_range):
             overlapped_ranges.append((first_elf_range, second_elf_range))
 
     return overlapped_ranges
