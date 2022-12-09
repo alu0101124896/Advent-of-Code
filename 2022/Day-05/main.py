@@ -6,6 +6,8 @@ Description: This program implements my solution to the Advent of Code
  challenge.
 """
 
+from copy import deepcopy
+
 
 def main():
     """Main function to resolve the challenge."""
@@ -14,10 +16,17 @@ def main():
 
     print("\nPart one:")
 
-    stacks_final_state = get_final_state(stacks_initial_state, move_steps)
+    stacks_final_state = get_final_state_v1(stacks_initial_state, move_steps)
     part_one_solution = get_top_crates(stacks_final_state)
 
     print("  The final message is:", part_one_solution)
+
+    print("\nPart two:")
+
+    stacks_final_state = get_final_state_v2(stacks_initial_state, move_steps)
+    part_two_solution = get_top_crates(stacks_final_state)
+
+    print("  The final message is:", part_two_solution)
 
 
 def parse_data():
@@ -57,13 +66,30 @@ def parse_data():
     return stacks_state, move_steps
 
 
-def get_final_state(stacks_state, move_steps):
+def get_final_state_v1(initial_stacks_state, move_steps):
     """Function to get the final state of the stacks after moving the crates
-    following the given move steps."""
+    following the given move steps. Version 1 moves the crates one by one."""
+
+    stacks_state = deepcopy(initial_stacks_state)
 
     for crates_to_move, origin, destiny in move_steps:
         for _ in range(crates_to_move):
             stacks_state[destiny-1].append(stacks_state[origin-1].pop())
+
+    return stacks_state
+
+
+def get_final_state_v2(initial_stacks_state, move_steps):
+    """Function to get the final state of the stacks after moving the crates
+    following the given move steps. Version 2 moves the groups of crates all
+    together at the same time."""
+
+    stacks_state = deepcopy(initial_stacks_state)
+
+    for crates_to_move, origin, destiny in move_steps:
+        stacks_state[destiny-1].extend(
+            stacks_state[origin-1][-crates_to_move:])
+        stacks_state[origin-1] = stacks_state[origin-1][:-crates_to_move]
 
     return stacks_state
 
