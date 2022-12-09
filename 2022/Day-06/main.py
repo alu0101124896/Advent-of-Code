@@ -19,6 +19,13 @@ def main():
 
     print("  The number of processed characters is:", part_one_solution)
 
+    print("\nPart two:")
+
+    start_marker = get_start_marker(datastream, start_marker_len=14)
+    part_two_solution = datastream.index(start_marker) + len(start_marker)
+
+    print("  The number of processed characters is:", part_two_solution)
+
 
 def parse_data():
     """Function to parse the input data of the challenge."""
@@ -31,10 +38,8 @@ def parse_data():
     return raw_data[0]
 
 
-def get_start_marker(datastream):
-    """Function to get the start-of-packet marker."""
-
-    start_marker_len = 4
+def get_start_marker(datastream, start_marker_len=4):
+    """Function to get the start marker."""
 
     for i in range(len(datastream) - start_marker_len):
         substring = datastream[i:i + start_marker_len]
