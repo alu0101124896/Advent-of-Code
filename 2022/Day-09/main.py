@@ -6,7 +6,7 @@ Description: This program implements my solution to the Advent of Code
  challenge.
 """
 
-from rope_knot import RopeKnot
+from rope import Rope
 
 
 def main():
@@ -16,10 +16,19 @@ def main():
 
     print("\nPart one:")
 
-    head, tail = follow(directions)
-    part_one_solution = len(tail.unique_positions())
+    rope_one = Rope(length=2)
+    rope_one.follow(directions)
+    part_one_solution = len(rope_one.tail.unique_positions())
 
     print("  The number of unique positions is:", part_one_solution)
+
+    print("\nPart two:")
+
+    rope_two = Rope(length=10)
+    rope_two.follow(directions)
+    part_two_solution = len(rope_two.tail.unique_positions())
+
+    print("  The number of unique positions is:", part_two_solution)
 
 
 def parse_data():
@@ -37,21 +46,6 @@ def parse_data():
     directions = [(line[0], int(line[1])) for line in raw_directions]
 
     return directions
-
-
-def follow(directions):
-    """Function to move a rope following the given directions."""
-
-    head = RopeKnot()
-    tail = RopeKnot()
-
-    for direction, n_steps in directions:
-        for _ in range(n_steps):
-            head.move_towards(direction)
-            if not tail.is_touching(head):
-                tail.move_to(head.prev_location())
-
-    return head, tail
 
 
 if __name__ == "__main__":
