@@ -12,12 +12,20 @@ def main():
 
     program = parse_data()
 
+    signal_strengths, crt_image = execute(program)
+
     print("\nPart one:")
 
-    signal_strengths = execute(program)
     part_one_solution = sum(signal_strengths)
 
     print("  The sum of the signal strengths is:", part_one_solution)
+
+    print("\nPart two:")
+
+    print("  The CRT image produced is shown below:", end="\n\n")
+
+    for line in crt_image:
+        print(line)
 
 
 def parse_data():
@@ -45,12 +53,22 @@ def execute(program):
     signal_strengths = []
     current_instruction = None
     process_lock_timeout = 0
+    sprite_position = move_sprite(x_var)
+    current_crt_row = ""
+    crt_image = []
 
     while len(program) > 0:
         cycle_counter += 1
 
         if (cycle_counter + 20) % 40 == 0:
             signal_strengths.append(cycle_counter * x_var)
+
+        current_crt_col = (cycle_counter % 40) - 1
+        current_crt_row += sprite_position[current_crt_col]
+
+        if len(current_crt_row) == 40:
+            crt_image.append(current_crt_row)
+            current_crt_row = ""
 
         if process_lock_timeout == 0:
             current_instruction = program.pop(0)
@@ -62,10 +80,18 @@ def execute(program):
 
         if current_instruction[0] == "addx" and process_lock_timeout == 1:
             x_var += int(current_instruction[1])
+            sprite_position = move_sprite(x_var)
 
         process_lock_timeout -= 1
 
-    return signal_strengths
+    return signal_strengths, crt_image
+
+
+def move_sprite(position):
+    return [
+        "#" if abs(position - i) <= 1 else "."
+        for i in range(40)
+    ]
 
 
 if __name__ == "__main__":
