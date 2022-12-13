@@ -6,20 +6,32 @@ Description: This program implements my solution to the Advent of Code
  challenge.
 """
 
+from copy import deepcopy
 import re
+from functools import reduce
 
 
 def main():
     """Main function to resolve the challenge."""
 
-    monkey_notes = parse_data()
+    initial_monkey_notes = parse_data()
 
     print("\nPart one:")
 
-    play_game(monkey_notes, rounds=20)
-    part_one_solution = get_monkey_business_level(monkey_notes)
+    part_one_final_notes = play_game(initial_monkey_notes, rounds=20)
+    part_one_solution = get_monkey_business_level(part_one_final_notes)
 
     print("  The monkey business level after 20 rounds is:", part_one_solution)
+
+    print("\nPart two:")
+
+    part_two_final_notes = play_game(initial_monkey_notes,
+                                     rounds=10000,
+                                     reduce_relief=False)
+    part_two_solution = get_monkey_business_level(part_two_final_notes)
+
+    print("  The monkey business level after 10000 rounds is:",
+          part_two_solution)
 
 
 def parse_data():
@@ -53,8 +65,13 @@ def parse_data():
     return monkey_notes
 
 
-def play_game(monkey_notes, rounds):
+def play_game(initial_monkey_notes, rounds, reduce_relief=True):
     """Function to let the monkeys play its game the given number of rounds."""
+
+    monkey_notes = deepcopy(initial_monkey_notes)
+
+    modulo = reduce(lambda x, y: x * y,
+                    (monkey["test"]["condition"] for monkey in monkey_notes))
 
     for _ in range(rounds):
         for monkey in monkey_notes:
@@ -62,17 +79,24 @@ def play_game(monkey_notes, rounds):
                 new_worry_level = get_new_worry_level(
                     item_worry_level,
                     monkey["operation"]
-                ) // 3
+                )
 
-                if (new_worry_level % monkey["test"]["condition"]) == 0:
+                # Help needed here:
+                relieved_worry_level = (new_worry_level % modulo
+                                        if reduce_relief
+                                        else new_worry_level // reduce_relief)
+
+                if (relieved_worry_level % monkey["test"]["condition"]) == 0:
                     monkey_notes[monkey["test"]["true_case"]]["items"].append(
-                        new_worry_level)
+                        relieved_worry_level)
                 else:
                     monkey_notes[monkey["test"]["false_case"]]["items"].append(
-                        new_worry_level)
+                        relieved_worry_level)
 
             monkey["inspections"] += len(monkey["items"])
             monkey["items"].clear()
+
+    return monkey_notes
 
 
 def get_new_worry_level(item_worry_level, operation):
