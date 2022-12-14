@@ -12,13 +12,13 @@ HEIGHT_ORDER = "SabcdefghijklmnopqrstuvwxyzE"
 
 
 class Cell:
-    def __init__(self, position, height):
-        self.x = position[0]
-        self.y = position[1]
+    def __init__(self, location, height):
+        self.x = location[0]
+        self.y = location[1]
         self.height = HEIGHT_ORDER.index(height)
 
         self.distance = inf
-        self.previous_cell = None
+        self.next_cell = None
 
     def location(self):
         """Function to get the grid's location of this cell."""
@@ -40,7 +40,7 @@ class Cell:
                 continue
 
             neighbor = grid[i][j]
-            if neighbor.height <= self.height + 1:
+            if neighbor.height >= self.height - 1:
                 neighbors.append(neighbor)
 
         return neighbors
