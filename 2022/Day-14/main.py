@@ -6,6 +6,7 @@ Description: This program implements my solution to the Advent of Code
  challenge.
 """
 
+from copy import deepcopy
 from itertools import pairwise
 
 
@@ -14,13 +15,23 @@ def main():
 
     rock_paths = parse_data()
     sand_entry_point = (500, 0)
-    cave_system = generate_cave_system(rock_paths)
+    cave_system, cave_width, cave_height = generate_cave_system(rock_paths)
 
     print("\nPart one:")
 
     part_one_solution, _ = simulate_sand_fall(sand_entry_point, cave_system)
 
     print("  The number of resting units of sand is:", part_one_solution)
+
+    print("\nPart two:")
+
+    cave_system = set_wall((0, cave_height + 2),
+                           (len(cave_system) - 1, cave_height + 2),
+                           cave_system)
+
+    part_two_solution, _ = simulate_sand_fall(sand_entry_point, cave_system)
+
+    print("  The number of resting units of sand is:", part_two_solution)
 
 
 def parse_data():
@@ -45,24 +56,22 @@ def generate_cave_system(rock_paths):
     """Function to generate the internal layout of the cave system from the
     given rock paths."""
 
-    cave_system = [
-        ["."
-         for _ in range(
-            max((y_coord
-                 for rock_path in rock_paths
-                 for _, y_coord in rock_path)) + 1)
-         ]
-        for _ in range(
-            max((x_coord
-                 for rock_path in rock_paths
-                 for x_coord, _ in rock_path)) + 1)
-    ]
+    cave_width = max((x_coord
+                      for rock_path in rock_paths
+                      for x_coord, _ in rock_path))
+    cave_height = max((y_coord
+                       for rock_path in rock_paths
+                       for _, y_coord in rock_path))
+
+    cave_system = [["."
+                    for _ in range(cave_height + 3)]
+                   for _ in range(cave_width + cave_height + 3)]
 
     for rock_path in rock_paths:
         for point_one, point_two in pairwise(rock_path):
             cave_system = set_wall(point_one, point_two, cave_system)
 
-    return cave_system
+    return cave_system, cave_width, cave_height
 
 
 def set_wall(point_one, point_two, cave_system):
@@ -87,14 +96,17 @@ def set_wall(point_one, point_two, cave_system):
     return cave_system
 
 
-def simulate_sand_fall(sand_entry_point, cave_system):
+def simulate_sand_fall(sand_entry_point, cave_system_initial_state):
     """Function to simulate a sand fall from the given entry point into the
      given cave system"""
 
     resting_sand_units = 0
+    cave_system = deepcopy(cave_system_initial_state)
 
-    while True:
+    while cave_system[sand_entry_point[0]][sand_entry_point[1]] == ".":
         sand_pos = list(sand_entry_point)
+        cave_system[sand_pos[0]][sand_pos[1]] = "o"
+
         try:
             while True:
                 # Down
