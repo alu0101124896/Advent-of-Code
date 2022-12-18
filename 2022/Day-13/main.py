@@ -6,6 +6,7 @@ Description: This program implements my solution to the Advent of Code
  challenge.
 """
 
+from functools import reduce
 import re
 
 REG_EXP = re.compile(r"""
@@ -26,6 +27,24 @@ def main():
     part_one_solution = sum(get_correct_packet_indices(packet_pairs))
 
     print("  The sum of indices of correct packets is:", part_one_solution)
+
+    print("\nPart two:")
+
+    all_received_packets = []
+    for packet_pair in packet_pairs:
+        all_received_packets.extend(packet_pair)
+
+    divider_packets = [[[2]], [[6]]]
+
+    sorted_packets = sort_packets(all_received_packets + divider_packets)
+
+    part_two_solution = reduce(
+        lambda x, y: x * y,
+        (sorted_packets.index(divider_packet) + 1
+         for divider_packet in divider_packets)
+    )
+
+    print("  The sum of indices of correct packets is:", part_two_solution)
 
 
 def parse_data():
@@ -128,6 +147,31 @@ def compare(left, right):
             return comparison_result
 
         current_index += 1
+
+
+def sort_packets(packets):
+    """Function to sort all packets (cocktail shaker sort implementation)."""
+
+    begin_idx = 0
+    end_idx = len(packets) - 1
+
+    while begin_idx <= end_idx:
+        new_begin_idx = end_idx
+        new_end_idx = begin_idx
+
+        for i in range(begin_idx, end_idx):
+            if compare(packets[i], packets[i + 1]) != 1:
+                packets[i + 1], packets[i] = packets[i:(i + 2)]
+                new_end_idx = i + 1
+        end_idx = new_end_idx - 1
+
+        for i in range(end_idx, begin_idx, -1):
+            if compare(packets[i - 1], packets[i]) != 1:
+                packets[i], packets[i - 1] = packets[(i - 1):(i + 1)]
+                new_begin_idx = i - 1
+        begin_idx = new_begin_idx + 1
+
+    return packets
 
 
 if __name__ == "__main__":
