@@ -41,3 +41,23 @@ class SensorsMap:
                     empty_cells.add(i)
 
         return empty_cells
+
+    def find_distress_beacon(self, lower_bound, upper_bound):
+        """Function to find the only position where a beacon can be
+        undetected."""
+
+        for sensor, beacon in self.sensors_reports:
+            current_distance = distance(sensor, beacon) + 1
+
+            for i in range(sensor[0] - current_distance,
+                           sensor[0] + current_distance + 1):
+                perimeter_idx = current_distance - abs(sensor[0] - i)
+                for j in {sensor[1] - perimeter_idx,
+                          sensor[1] + perimeter_idx}:
+
+                    if (lower_bound < i < upper_bound and
+                            lower_bound < j < upper_bound and
+                            all(((distance(sensor, (i, j)) >
+                                  distance(sensor, beacon))
+                                 for sensor, beacon in self.sensors_reports))):
+                        return i, j

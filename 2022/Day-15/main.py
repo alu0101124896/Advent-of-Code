@@ -25,6 +25,19 @@ def main():
     print("  The number positions where a beacon cannot be present is:",
           part_one_solution)
 
+    print("\nPart two:")
+
+    lower_bound = int(input("  Lower bound: "))
+    upper_bound = int(input("  Upper bound: "))
+
+    distress_beacon = sensors_map.find_distress_beacon(lower_bound,
+                                                       upper_bound)
+
+    part_two_solution = (distress_beacon[0] * 4000000) + distress_beacon[1]
+
+    print("  The tuning frequency of the distress beacon's position is:",
+          part_two_solution)
+
 
 def parse_data():
     """Function to parse the input data of the challenge."""
