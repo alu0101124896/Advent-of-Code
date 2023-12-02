@@ -11,6 +11,8 @@ def main():
 
     previous_games_record = parse_data()
 
+    # Part 1
+
     possible_games = get_possible_games(
         previous_games_record,
         bag_content={
@@ -21,6 +23,23 @@ def main():
     )
 
     print("The sum of the IDs of the possible games is:", sum(possible_games))
+
+    # Part 2
+
+    min_bag_content_per_game = [
+        get_min_bag_content(game_record)
+        for game_record in previous_games_record.values()
+    ]
+
+    powers_of_min_contents = [
+        min_bag_content["red"] * min_bag_content["green"] * min_bag_content["blue"]
+        for min_bag_content in min_bag_content_per_game
+    ]
+
+    print(
+        "The sum of the powers of the minimum contents of each game is:",
+        sum(powers_of_min_contents),
+    )
 
 
 def parse_data():
@@ -70,6 +89,24 @@ def get_possible_games(previous_games_record, bag_content):
             possible_games.append(game_id)
 
     return possible_games
+
+
+def get_min_bag_content(game_record):
+    """Function to get the minimum content inside the bag to be able to play a game
+    resulting in the given record."""
+
+    min_bag_content = {
+        "red": 0,
+        "green": 0,
+        "blue": 0,
+    }
+
+    for batch in game_record:
+        for color, cubes_count in batch.items():
+            if cubes_count > min_bag_content[color]:
+                min_bag_content[color] = cubes_count
+
+    return min_bag_content
 
 
 if __name__ == "__main__":
