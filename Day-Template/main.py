@@ -1,13 +1,13 @@
-'''
+"""
 File: main.py
 Author: Sergio Tabares Hernández <alu0101124896@ull.edu.es>
 Since: # ToDo: Add date
-Description: This program implemets my solution to the Advent of Code challenge.
-'''
+Description: This program implements my solution to the Advent of Code challenge.
+"""
 
 
 def main():
-    '''Main function to resolve the challenge.'''
+    """Main function to resolve the challenge."""
 
     parsed_data = parse_data()
 
@@ -17,7 +17,7 @@ def main():
 
 
 def parse_data():
-    '''Funcion to parse the input data of the challenge.'''
+    """Function to parse the input data of the challenge."""
 
     input_file = input("\nInput file: ")
 
@@ -30,7 +30,7 @@ def parse_data():
 
 
 def main_challenge_function():
-    '''Function to # ToDo: Add function info.'''
+    """Function to # ToDo: Add function info."""
 
     solution = None  # ToDo: Add function functionality
 
