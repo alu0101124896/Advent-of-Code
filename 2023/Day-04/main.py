@@ -11,12 +11,24 @@ def main():
 
     scratchcards_info = parse_data()
 
+    # Part 1
+
     scratchcards_values = [
         get_scratchcard_value(scratchcard)
         for scratchcard in scratchcards_info.values()
     ]
 
     print(f"The Elf's pile of scratchcards is worth {sum(scratchcards_values)} points")
+
+    # Part 2
+
+    process_scratchcards(scratchcards_info)
+
+    print(
+        "After processing the Elf's pile of scratchcards, it is composed of",
+        count_scratchcards(scratchcards_info),
+        "scratchcards"
+    )
 
 
 def parse_data():
@@ -31,7 +43,8 @@ def parse_data():
         rawdata.pop()
 
     scratchcards_info = {
-        card.split(": ")[0].split()[1]: {
+        int(card.split(": ")[0].split()[1]): {
+            "instances": 1,
             "winning_numbers": [
                 int(number)
                 for number in card.split(": ")[1].split(" | ")[0].split()
@@ -70,6 +83,28 @@ def get_prized_numbers(scratchcard):
         for number in scratchcard["card_numbers"]
         if number in scratchcard["winning_numbers"]
     ]
+
+
+def process_scratchcards(scratchcards_info):
+    """Function to process the scratchcards. The prize of a scratchcard is as many
+    scratchcards as prized numbers it has. The new scratchcards received are copies of
+    the following scratchcards from the original pile."""
+
+    for current_index, scratchcard_info in scratchcards_info.items():
+        for idx in range(
+                current_index + 1,
+                current_index + len(get_prized_numbers(scratchcard_info)) + 1
+        ):
+            scratchcards_info[idx]["instances"] += scratchcards_info[current_index]["instances"]
+
+
+def count_scratchcards(scratchcards_info):
+    """Function to count the total number of scratchcards in the given pile."""
+
+    return sum(
+        scratchcard_info["instances"]
+        for scratchcard_info in scratchcards_info.values()
+    )
 
 
 if __name__ == "__main__":
