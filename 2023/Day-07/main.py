@@ -9,7 +9,9 @@ Description: This program implements my solution to the Advent of Code challenge
 def main():
     """Main function to resolve the challenge."""
 
-    hands_data = parse_data()
+    hands_data, jokerized_hands_data = parse_data()
+
+    # Part 1
 
     hands_data.sort(key=lambda hand_data: hand_data["value"])
 
@@ -17,8 +19,16 @@ def main():
 
     print("The solution", total_winnings)
 
+    # Part 2
 
-def parse_data() -> list[dict]:
+    jokerized_hands_data.sort(key=lambda hand_data: hand_data["value"])
+
+    total_jokerized_winnings = get_total_winnings(jokerized_hands_data)
+
+    print("The solution", total_jokerized_winnings)
+
+
+def parse_data() -> tuple[list[dict], list[dict]]:
     """Function to parse the input data of the challenge."""
 
     input_file = input("\nInput file: ")
@@ -30,6 +40,7 @@ def parse_data() -> list[dict]:
         rawdata.pop()
 
     hands_data = []
+    jokerized_hands_data = []
     for hand_raw_data in rawdata:
         cards, bid = hand_raw_data.split()
 
@@ -41,26 +52,54 @@ def parse_data() -> list[dict]:
             }
         )
 
-    return hands_data
+        jokerized_hands_data.append(
+            {
+                "cards": cards,
+                "bid": int(bid),
+                "value": get_hand_value(
+                    [get_card_value(card, jokerized=True) for card in cards],
+                    jokerized=True,
+                ),
+            }
+        )
+
+    return hands_data, jokerized_hands_data
 
 
-def get_card_value(card: str) -> int:
+def get_card_value(card: str, jokerized: bool = False) -> int:
     """Function to get the value of the given card."""
 
-    value_order = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
+    if jokerized:
+        value_order = ["J", "2", "3", "4", "5", "6", "7", "8", "9", "T", "Q", "K", "A"]
+    else:
+        value_order = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
 
     return value_order.index(card)
 
 
-def get_hand_value(cards_values: list[int]) -> int:
+def get_hand_value(cards_values: list[int], jokerized: bool = False) -> int:
     """Function to get the value of the given hand."""
 
     hand_value = 0
+    jokers = []
     cards_values.reverse()
     for card_id, card_value in enumerate(cards_values):
         hand_value += card_value * (10 ** (card_id * 2))
 
+        if jokerized and card_value == 0:  # Value of a Joker
+            jokers.append(card_id)
+
+    jokers.reverse()
+    for joker in jokers:
+        cards_values.pop(joker)
+
     cards_count = [cards_values.count(card) for card in set(cards_values)]
+
+    if len(cards_count) > 0:
+        cards_count[cards_count.index(max(cards_count))] += len(jokers)
+    else:
+        cards_count.append(5)
+
     if 5 in cards_count:
         type_value = 6  # Five of a kind
     elif 4 in cards_count:
