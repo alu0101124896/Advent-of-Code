@@ -9,13 +9,26 @@ Description: This program implements my solution to the Advent of Code challenge
 def main():
     """Main function to resolve the challenge."""
 
-    leaderboard = parse_data()
+    time_data, record_distance_data = parse_data()
+
+    # Part 1
 
     winning_error_margin = 1
-    for race_info in leaderboard:
-        winning_error_margin *= record_breaking_ways(race_info)
+    for race_time, race_record in zip(time_data, record_distance_data):
+        winning_error_margin *= record_breaking_ways(int(race_time), int(race_record))
 
-    print("The winning error margin is", winning_error_margin)
+    print("The expected winning error margin is", winning_error_margin)
+
+    # Part 2
+
+    real_time_data = "".join(time_data)
+    real_record_distance_data = "".join(record_distance_data)
+
+    real_winning_error_margin = record_breaking_ways(
+        int(real_time_data), int(real_record_distance_data)
+    )
+
+    print("The real winning error margin is", real_winning_error_margin)
 
 
 def parse_data():
@@ -26,20 +39,14 @@ def parse_data():
     with open(input_file, "r", encoding="utf-8") as infile:
         rawdata = infile.read().split("\n")
 
-    time_data = [int(time_entry) for time_entry in rawdata[0].split()[1:]]
-    record_distance_data = [
-        int(record_distance_entry) for record_distance_entry in rawdata[1].split()[1:]
-    ]
+    time_data = rawdata[0].split()[1:]
+    record_distance_data = rawdata[1].split()[1:]
 
-    leaderboard = list(zip(time_data, record_distance_data))
-
-    return leaderboard
+    return time_data, record_distance_data
 
 
-def record_breaking_ways(race_info):
+def record_breaking_ways(race_time, race_record):
     """Function to calculate the number of ways to break the record of a given boat race."""
-
-    race_time, race_record = race_info
 
     num_record_breaking_ways = sum(
         (
