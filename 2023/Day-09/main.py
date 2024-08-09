@@ -11,11 +11,24 @@ def main():
 
     sensor_report = parse_data()
 
-    extrapolated_values = [
+    # Part one
+
+    extrapolated_next_values = [
         extrapolate_next_value_record(value_history) for value_history in sensor_report
     ]
 
-    print("The sum of all extrapolated values is", sum(extrapolated_values))
+    print("The sum of all extrapolated next values is", sum(extrapolated_next_values))
+
+    # Part two
+
+    extrapolated_prev_values = [
+        extrapolate_next_value_record(value_history[::-1])
+        for value_history in sensor_report
+    ]
+
+    print(
+        "The sum of all extrapolated previous values is", sum(extrapolated_prev_values)
+    )
 
 
 def parse_data():
@@ -40,18 +53,20 @@ def parse_data():
 def extrapolate_next_value_record(value_history):
     """Function to extrapolate the next value record based on the given value history."""
 
-    diffs = [value_history]
+    history_diffs = [value_history]
 
-    while not all((value_record == 0 for value_record in diffs[-1])):
-        next_diff = []
-        for i, j in zip(diffs[-1][:-1], diffs[-1][1:]):
-            next_diff.append(j - i)
-        diffs.append(next_diff)
+    while not all((value_record == 0 for value_record in history_diffs[-1])):
+        next_history_diff = []
 
-    for prev, last in zip(diffs[:-1][::-1], diffs[1:][::-1]):
+        for i, j in zip(history_diffs[-1][:-1], history_diffs[-1][1:]):
+            next_history_diff.append(j - i)
+
+        history_diffs.append(next_history_diff)
+
+    for prev, last in zip(history_diffs[:-1][::-1], history_diffs[1:][::-1]):
         prev.append(last[-1] + prev[-1])
 
-    return diffs[0][-1]
+    return history_diffs[0][-1]
 
 
 if __name__ == "__main__":
