@@ -11,12 +11,22 @@ def main():
 
     galaxy_locations, empty_rows, empty_cols = parse_data()
 
+    # Part one
+
     spatial_distance = get_spatial_distance(galaxy_locations, empty_rows, empty_cols)
 
     print("The total distance between all galaxies is:", spatial_distance)
 
+    # Part two
 
-def parse_data():
+    older_spatial_distance = get_spatial_distance(
+        galaxy_locations, empty_rows, empty_cols, expansion_rate=1000000
+    )
+
+    print("The total distance between all older galaxies is:", older_spatial_distance)
+
+
+def parse_data() -> tuple[list[tuple[int, int]], set[int], set[int]]:
     """Function to parse the input data of the challenge."""
 
     input_file = input("\nInput file: ")
@@ -42,7 +52,12 @@ def parse_data():
     return galaxy_locations, empty_rows, empty_cols
 
 
-def get_spatial_distance(galaxy_locations, empty_rows, empty_cols):
+def get_spatial_distance(
+    galaxy_locations: list[tuple[int, int]],
+    empty_rows: set[int],
+    empty_cols: set[int],
+    expansion_rate: int = 2,
+) -> int:
     """
     Function to calculate the sum of distances between each pair of the given galaxies.
     """
@@ -61,14 +76,14 @@ def get_spatial_distance(galaxy_locations, empty_rows, empty_cols):
                     a_galaxy_location[0] < row < b_galaxy_location[0]
                     or a_galaxy_location[0] > row > b_galaxy_location[0]
                 ):
-                    current_pair_dist += 1
+                    current_pair_dist += expansion_rate - 1
 
             for col in empty_cols:
                 if (
                     a_galaxy_location[1] < col < b_galaxy_location[1]
                     or a_galaxy_location[1] > col > b_galaxy_location[1]
                 ):
-                    current_pair_dist += 1
+                    current_pair_dist += expansion_rate - 1
 
             spatial_distance += current_pair_dist
 
