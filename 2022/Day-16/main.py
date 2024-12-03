@@ -14,23 +14,27 @@ def main():
 
     valves_report = parse_data()
 
+    possible_approaches = get_possible_approaches(valves_report)
+
     print("\nPart one:")
 
-    part_one_solution = get_most_pressure_release(
-        valves_report,
-        minutes_left=30,
-        current_path=["AA"],
-        open_valves=[],
-        released_pressure=0,
-    )
+    part_one_solution = get_most_pressure_release_1p(possible_approaches)
 
-    print("  The most pressure you can release is:", part_one_solution)
+    print("  The most pressure you can release alone is:", part_one_solution)
+
+    # print("\nPart two:")
+    #
+    # part_two_solution = get_most_pressure_release_2p(possible_approaches)
+    #
+    # print("  The most pressure you can release with one elephant's help is:",
+    #       part_two_solution)
 
 
 def parse_data():
     """Function to parse the input data of the challenge."""
 
-    input_file = input("\nInput file: ")
+    # input_file = input("\nInput file: ")
+    input_file = "test.txt"
 
     with open(input_file, 'r', encoding="utf-8") as infile:
         raw_data = infile.read().split("\n")
@@ -62,23 +66,23 @@ def parse_data():
     return valves_report
 
 
-def get_most_pressure_release(
+def get_possible_approaches(
         valves_report,
-        minutes_left,
-        current_path,
-        open_valves,
-        released_pressure,
+        minutes_left=30,
+        current_path=["AA"],
+        open_valves=[],
+        released_pressure=0,
 ):
     """Function to get the most possible pressure you can release in the given
      scenario."""
 
     if minutes_left <= 0:
-        return released_pressure
+        return [current_path]
 
-    possible_pressure_releases = []
+    possible_approaches = []
     possible_paths = [
         possible_path
-        for possible_path in get_possible_paths(
+        for possible_path in get_possible_steps(
             valves_report,
             minutes_left,
             [current_path[-1]],
@@ -93,13 +97,11 @@ def get_most_pressure_release(
     ))
 
     if len(possible_paths) == 0:
-        return released_pressure + (
-                current_pressure_per_minute * minutes_left
-        )
+        return [current_path]
 
     for possible_path in possible_paths:
-        possible_pressure_releases.append(
-            get_most_pressure_release(
+        possible_approaches.extend(
+            get_possible_approaches(
                 valves_report,
                 minutes_left - len(possible_path),
                 current_path + possible_path[1:],
@@ -110,39 +112,57 @@ def get_most_pressure_release(
             )
         )
 
-    return max(possible_pressure_releases)
+    return possible_approaches
 
 
-def get_possible_paths(
+def get_possible_steps(
         valves_report,
         minutes_left,
-        current_path,
+        current_steps,
         open_valves,
 ):
     """Function to get all possible paths to the closed valves with some
     positive flow rate."""
 
-    possible_paths = []
+    possible_steps = []
 
-    if len(current_path) > minutes_left:
-        return possible_paths
+    if len(current_steps) > minutes_left:
+        return possible_steps
 
-    if (valves_report[current_path[-1]]["flow_rate"] != 0
-            and current_path[-1] not in open_valves):
-        possible_paths.append(current_path)
+    if (valves_report[current_steps[-1]]["flow_rate"] != 0
+            and current_steps[-1] not in open_valves):
+        possible_steps.append(current_steps)
 
-    for adjacent_valve in valves_report[current_path[-1]]["adjacent_valves"]:
-        if adjacent_valve not in current_path:
-            possible_paths.extend(
-                get_possible_paths(
+    for adjacent_valve in valves_report[current_steps[-1]]["adjacent_valves"]:
+        if adjacent_valve not in current_steps:
+            possible_steps.extend(
+                get_possible_steps(
                     valves_report,
                     minutes_left,
-                    current_path + [adjacent_valve],
+                    current_steps + [adjacent_valve],
                     open_valves,
                 )
             )
 
-    return possible_paths
+    return possible_steps
+
+
+def get_most_pressure_release_1p(possible_approaches):
+    """Fff"""
+
+    pressure_releases =
+
+    for possible_approach in possible_approaches:
+
+    return max()
+
+
+
+# def get_most_pressure_release_2p(possible_approaches):
+#     """Fff"""
+#
+#     pass
+
 
 
 if __name__ == "__main__":
